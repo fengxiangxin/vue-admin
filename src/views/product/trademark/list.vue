@@ -22,11 +22,21 @@
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <template>
-          <el-button type="warning" icon="el-icon-edit" size="small">
+        <template v-slot="scope">
+          <el-button
+            type="warning"
+            icon="el-icon-edit"
+            size="small"
+            @click="updateTrademask"
+          >
             修改
           </el-button>
-          <el-button type="danger" icon="el-icon-delete" size="small">
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            size="small"
+            @click="delTrademak(scope.row.id, scope.row.tmName)"
+          >
             删除
           </el-button>
         </template>
@@ -171,6 +181,7 @@ export default {
     handleAvatarSuccess(res) {
       this.trademarkForm.logoUrl = res.data;
     },
+    /* 添加数据 */
     submitForm(form) {
       this.$refs[form].validate(async (valid) => {
         if (valid) {
@@ -189,6 +200,27 @@ export default {
         }
       });
     },
+    /* 删除数据 */
+    delTrademak(id, name) {
+      this.$confirm(`确定删除 ${name} 吗?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          /* 点击确定发送删除请求 */
+          this.$API.trademark.delTrademark(id);
+          this.$message.success("删除成功");
+          this.getPageList(this.current, this.size);
+        })
+        .catch(() => {
+          this.$message.info("已取消删除");
+        });
+    },
+    /* 修改数据 */
+    updateTrademask(){
+      /* 将当前要修改的数据放入对话框 */
+    }
   },
   mounted() {
     this.getPageList(this.current, this.size);

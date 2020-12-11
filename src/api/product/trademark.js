@@ -21,5 +21,24 @@ export default {
       method: "POST",
       data
     });
+  },
+  /*
+    删除品牌数据
+  */
+  delTrademark(id) {
+    return request({
+      url: `${api_name}/remove/${id}`,
+      method: "DELETE"
+    });
+  },
+  /*
+    修改品牌数据
+  */
+  updateTrademask(data) {
+    return request({
+      url: `${api_name}/update`,
+      method: "PUT",
+      data
+    });
   }
 };
