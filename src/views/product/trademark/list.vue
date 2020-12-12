@@ -186,6 +186,7 @@ export default {
     submitForm(form) {
       const { trademarkForm } = this;
       const isUpdateType = !!trademarkForm.id;
+      let result;
       this.$refs[form].validate(async (valid) => {
         if (valid) {
           /* 如果校验通过则发送请求 */
@@ -204,13 +205,9 @@ export default {
               this.$message.warning("不能提交相同数据");
               return;
             }
-            const result = await this.$API.trademark.updateTrademask(
-              this.trademarkForm
-            );
+            result = await this.$API.trademark.updateTrademask(trademarkForm);
           } else {
-            const result = await this.$API.trademark.addTrademark(
-              this.trademarkForm
-            );
+            result = await this.$API.trademark.addTrademark(trademarkForm);
           }
           if (result.code === 200) {
             /* 如果添加数据成功，则提示用户信息，隐藏对话框，重新加载数据 */
@@ -221,7 +218,7 @@ export default {
             this.getPageList(this.current, this.size);
           }
         } else {
-          this.$message.error("添加品牌数据失败");
+          this.$message.error(result.message);
         }
       });
     },
