@@ -32,7 +32,7 @@
             type="danger"
             icon="el-icon-delete"
             size="small"
-            @click="delTrademak(scope.row.id, scope.row.tmName)"
+            @click="delTrademak(row.id,row.tmName)"
           >
             删除
           </el-button>
@@ -186,6 +186,7 @@ export default {
     submitForm(form) {
       const { trademarkForm } = this;
       const isUpdateType = !!trademarkForm.id;
+      /* if语句内是块级作用域，所以要把result定义在外面 */
       let result;
       this.$refs[form].validate(async (valid) => {
         if (valid) {
