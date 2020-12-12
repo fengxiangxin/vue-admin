@@ -40,5 +40,14 @@ export default {
       method: "PUT",
       data
     });
+  },
+  /*
+    查询单个品牌数据
+  */
+  getTrademark(id) {
+    return request({
+      url: `${api_name}/get/${id}`,
+      method: "GET"
+    });
   }
 };

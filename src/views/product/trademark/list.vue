@@ -1,9 +1,6 @@
 <template>
   <div>
-    <el-button
-      type="primary"
-      icon="el-icon-plus"
-      @click="dialogFormVisible = true"
+    <el-button type="primary" icon="el-icon-plus" @click="addTrademark"
       >添加</el-button
     >
     <el-table :data="tableData" border style="width: 100%; margin: 20px 0">
@@ -22,12 +19,12 @@
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <template v-slot="scope">
+        <template v-slot="{ row }">
           <el-button
             type="warning"
             icon="el-icon-edit"
             size="small"
-            @click="updateTrademask"
+            @click="updateTrademask(row)"
           >
             修改
           </el-button>
@@ -54,7 +51,10 @@
     >
     </el-pagination>
     <!-- 对话框 -->
-    <el-dialog title="添加品牌" :visible.sync="dialogFormVisible">
+    <el-dialog
+      :title="`${trademarkForm.id ? '修改' : '添加'}品牌`"
+      :visible.sync="dialogFormVisible"
+    >
       <!-- rules表单验证规则 -->
       <el-form
         :model="trademarkForm"
@@ -95,6 +95,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <!-- 如何判断点击按钮是修改还是添加 -->
         <el-button type="primary" @click="submitForm('ruleForm')"
           >确 定</el-button
         >
@@ -181,17 +182,41 @@ export default {
     handleAvatarSuccess(res) {
       this.trademarkForm.logoUrl = res.data;
     },
-    /* 添加数据 */
+    /* 提交表单 */
     submitForm(form) {
+      const { trademarkForm } = this;
+      const isUpdateType = !!trademarkForm.id;
       this.$refs[form].validate(async (valid) => {
         if (valid) {
           /* 如果校验通过则发送请求 */
-          const result = await this.$API.trademark.addTrademark(
-            this.trademarkForm
-          );
+          /* 判断是修改操作还添加操作 */
+          if (isUpdateType) {
+            /* 如果数据未修改则不发送请求 */
+            /* 从列表中找到之前的数据 */
+            const tf = this.tableData.find(
+              (item) => item.id === trademarkForm.id
+            );
+            /* 判断数据是否被修改 */
+            if (
+              tf.tmName === trademarkForm.tmName &&
+              tf.logoUrl === trademarkForm.logoUrl
+            ) {
+              this.$message.warning("不能提交相同数据");
+              return;
+            }
+            const result = await this.$API.trademark.updateTrademask(
+              this.trademarkForm
+            );
+          } else {
+            const result = await this.$API.trademark.addTrademark(
+              this.trademarkForm
+            );
+          }
           if (result.code === 200) {
             /* 如果添加数据成功，则提示用户信息，隐藏对话框，重新加载数据 */
-            this.$message.success("添加品牌数据成功");
+            this.$message.success(
+              `${isUpdateType ? "修改" : "添加"}品牌数据成功`
+            );
             this.dialogFormVisible = false;
             this.getPageList(this.current, this.size);
           }
@@ -218,9 +243,18 @@ export default {
         });
     },
     /* 修改数据 */
-    updateTrademask(){
+    updateTrademask(row) {
       /* 将当前要修改的数据放入对话框 */
-    }
+      /* 保证trademarkForm和row不指向同一个对象 */
+      /* 由于row的数据中id，所以可以根据trademarkForm是否有id来判断操作类型 */
+      this.trademarkForm = { ...row };
+      this.dialogFormVisible = true;
+    },
+    /*  */
+    addTrademark() {
+      this.trademarkForm = {};
+      this.dialogFormVisible = true;
+    },
   },
   mounted() {
     this.getPageList(this.current, this.size);
