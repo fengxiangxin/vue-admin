@@ -6,7 +6,12 @@
       @click="addTrademark('ruleForm')"
       >添加</el-button
     >
-    <el-table :data="tableData" border style="width: 100%; margin: 20px 0">
+    <el-table
+      v-loading="loading"
+      :data="tableData"
+      border
+      style="width: 100%; margin: 20px 0"
+    >
       <el-table-column type="index" label="序号" width="80" align="center">
       </el-table-column>
       <el-table-column prop="tmName" label="品牌名称"> </el-table-column>
@@ -139,12 +144,15 @@ export default {
           },
         ],
       },
+      /* 是否正在加载 */
+      loading: false,
     };
   },
   methods: {
     /* 获取品牌分页数据 */
     async getPageList(page, limit) {
       /* 发送请求 */
+      this.loading = true;
       const result = await this.$API.trademark.getPageList(page, limit);
       if (result.code === 200) {
         /* 将请求的数据保存在data中 */
@@ -157,6 +165,7 @@ export default {
       } else {
         this.$message.error("获取品牌列表失败");
       }
+      this.loading = false;
     },
     /**
      * 当size发生变化时，发送请求如果引起当前页码的改变则会立即触发页码改变事件
