@@ -1,6 +1,9 @@
 <template>
   <div>
-    <el-button type="primary" icon="el-icon-plus" @click="addTrademark"
+    <el-button
+      type="primary"
+      icon="el-icon-plus"
+      @click="addTrademark('ruleForm')"
       >添加</el-button
     >
     <el-table :data="tableData" border style="width: 100%; margin: 20px 0">
@@ -24,7 +27,7 @@
             type="warning"
             icon="el-icon-edit"
             size="small"
-            @click="updateTrademask(row)"
+            @click="updateTrademask(row, 'ruleForm')"
           >
             修改
           </el-button>
@@ -32,7 +35,7 @@
             type="danger"
             icon="el-icon-delete"
             size="small"
-            @click="delTrademak(row.id,row.tmName)"
+            @click="delTrademak(row.id, row.tmName)"
           >
             删除
           </el-button>
@@ -217,9 +220,9 @@ export default {
             );
             this.dialogFormVisible = false;
             this.getPageList(this.current, this.size);
+          } else {
+            this.$message.error(result.message);
           }
-        } else {
-          this.$message.error(result.message);
         }
       });
     },
@@ -241,16 +244,22 @@ export default {
         });
     },
     /* 修改数据 */
-    updateTrademask(row) {
+    updateTrademask(row, form) {
+      this.$refs[form] && this.$refs[form].clearValidate();
       /* 将当前要修改的数据放入对话框 */
       /* 保证trademarkForm和row不指向同一个对象 */
       /* 由于row的数据中id，所以可以根据trademarkForm是否有id来判断操作类型 */
       this.trademarkForm = { ...row };
       this.dialogFormVisible = true;
     },
-    /*  */
-    addTrademark() {
-      this.trademarkForm = {};
+    /* 添加数据 */
+    addTrademark(form) {
+      /* 清除表单验证 */
+      this.$refs[form] && this.$refs[form].clearValidate();
+      this.trademarkForm = {
+        logoUrl: "",
+        tmName: "",
+      };
       this.dialogFormVisible = true;
     },
   },
