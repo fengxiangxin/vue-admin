@@ -1,65 +1,114 @@
 <template>
   <div>
-    <el-card class="box-card" style="margin-bottom: 20px">
-      <el-form :inline="true" :model="categoryList" class="demo-form-inline">
-        <el-form-item label="一级分类">
-          <el-select  placeholder="请选择">
-            <el-option
-              v-for="category1 in categoryList.category1"
-              :key="category1.id"
-              :label="category1.name"
-              :value="category1.name"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="二级分类">
-          <el-select v-model="categoryList.category2" placeholder="请选择">
-            <el-option label="无数据" value="shanghai"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="三级分类">
-          <el-select v-model="categoryList.category3" placeholder="请选择">
-            <el-option label="无数据" value="shanghai"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-    </el-card>
-    <el-card class="box-card">
+    <Category @change="getAttrInfoList" />
+
+    <el-card class="box-card" v-show="isShow">
       <el-button type="primary" icon="el-icon-plus" disabled
         >添加属性</el-button
       >
-      <el-table :data="tableData" border style="width: 100%">
-        <el-table-column prop="date" label="序号" width="80" align="center">
+      <el-table :data="attrInfoList" border style="width: 100%">
+        <el-table-column type="index" label="序号" width="80" align="center">
         </el-table-column>
-        <el-table-column prop="date" label="属性名称" width="150">
+        <el-table-column prop="attrName" label="属性名称" width="150">
         </el-table-column>
-        <el-table-column prop="name" label="属性值列表"> </el-table-column>
-        <el-table-column prop="address" label="操作" width="150">
+        <el-table-column label="属性值列表">
+          <template v-slot="{ row }">
+            <el-tag
+              type="info"
+              v-for="attr in row.attrValueList"
+              :key="attr.id"
+              >{{ attr.valueName }}</el-tag
+            >
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="150">
+          <template v-slot="{ row }">
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              size="mini"
+              @click="updateAttr(row)"
+            ></el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+            ></el-button>
+          </template>
         </el-table-column>
       </el-table>
+    </el-card>
+
+    <el-card v-show="!isShow">
+      <el-form :inline="true" :model="attr" class="demo-form-inline">
+        <el-form-item label="属性名">
+          <el-input
+            v-model="attr.attrName"
+            placeholder="请输入属性名"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+
+      <el-button type="primary" icon="el-icon-plus">添加属性值</el-button>
+
+      <el-table
+        :data="attr.attrValueList"
+        border
+        style="width: 100%; margin: 20px 0"
+      >
+        <el-table-column type="index" label="序号" width="80" align="center">
+        </el-table-column>
+        <el-table-column label="属性值名称">
+          <template v-slot="{ row }">
+            <p>
+              {{ row.valueName }}
+            </p>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+            ></el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <el-button type="primary">保存</el-button>
+      <el-button>取消</el-button>
     </el-card>
   </div>
 </template>
 
 <script>
+import Category from "./category";
 export default {
   name: "AttrList",
   data() {
     return {
-      categoryList: {
-        category1: [],
-        category2: [],
-        category3: [],
+      attrInfoList: [],
+      attr: {
+        attrName: "",
+        attrValueList: "",
       },
-      tableData: [],
+      isShow: true,
     };
   },
-  async mounted() {
-    const result = await this.$API.attr.getCategory1();
-    console.log(result);
-    if (result.code === 200) {
-      this.categoryList.category1 = result.data;
-    }
+  methods: {
+    getAttrInfoList(attrInfoList) {
+      this.attrInfoList = attrInfoList;
+    },
+    updateAttr(row) {
+      this.isShow = false;
+      /* 深度克隆 */
+      this.attr = JSON.parse(JSON.stringify(row));
+    },
+  },
+  mounted() {},
+  components: {
+    Category,
   },
 };
 </script>
