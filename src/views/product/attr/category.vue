@@ -6,6 +6,7 @@
           v-model="category.category1Id"
           placeholder="请选择"
           @change="seleteCategory1Id"
+          :disabled="disabled"
         >
           <el-option
             v-for="category in category1List"
@@ -20,6 +21,7 @@
           v-model="category.category2Id"
           placeholder="请选择"
           @change="seleteCategory2Id"
+          :disabled="disabled"
         >
           <el-option
             v-for="category in category2List"
@@ -34,6 +36,7 @@
           v-model="category.category3Id"
           placeholder="请选择"
           @change="seleteCategory3Id"
+          :disabled="disabled"
         >
           <el-option
             v-for="category in category3List"
@@ -62,6 +65,7 @@ export default {
       },
     };
   },
+  props: ["disabled"],
   methods: {
     /* 获取二级分类列表 */
     async seleteCategory1Id(category1Id) {
@@ -74,7 +78,7 @@ export default {
       const result = await this.$API.attr.getCategory2(category1Id);
       if (result.code === 200) {
         this.category2List = result.data;
-        
+
         this.$emit("change", this.category);
       } else {
         this.$message.error(result.message);

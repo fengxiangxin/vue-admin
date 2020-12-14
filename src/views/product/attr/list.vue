@@ -33,11 +33,17 @@
               size="mini"
               @click="updateAttr(row)"
             ></el-button>
-            <el-button
-              type="danger"
-              icon="el-icon-delete"
-              size="mini"
-            ></el-button>
+            <el-popconfirm
+              :title="`确定删除 ${row.attrName} 吗？`"
+              @onConfirm="delAttr(row)"
+            >
+              <el-button
+                slot="reference"
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+              ></el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -201,6 +207,17 @@ export default {
         attrName: "",
         attrValueList: [],
       };
+    },
+    /* 删除属性 */
+    async delAttr(row) {
+      const result = await this.$API.attr.deleteAttr(row.id);
+      if (result.code === 200) {
+        this.$message.success("删除属性成功");
+        /* 重新加载 */
+        this.getAttrInfoList(this.category);
+      } else {
+        this.$message.error(result.message);
+      }
     },
   },
   mounted() {},

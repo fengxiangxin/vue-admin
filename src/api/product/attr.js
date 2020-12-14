@@ -38,5 +38,12 @@ export default {
       method: "POST",
       data
     });
+  },
+  /* 删除属性 */
+  deleteAttr(attrId) {
+    return request({
+      url: `${api_name}/deleteAttr/${attrId}`,
+      method: "DELETE"
+    });
   }
 };
