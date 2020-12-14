@@ -3,7 +3,11 @@
     <Category @change="getAttrInfoList" :disabled="!isShow" />
 
     <el-card class="box-card" v-show="isShow">
-      <el-button type="primary" icon="el-icon-plus" disabled
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        :disabled="!category.category3Id"
+        @click="addAttr"
         >添加属性</el-button
       >
       <el-table :data="attrInfoList" border style="width: 100%">
@@ -49,7 +53,9 @@
         </el-form-item>
       </el-form>
 
-      <el-button type="primary" icon="el-icon-plus">添加属性值</el-button>
+      <el-button type="primary" icon="el-icon-plus" @click="addAttrValue"
+        >添加属性值</el-button
+      >
 
       <el-table
         :data="attr.attrValueList"
@@ -66,8 +72,8 @@
               v-if="row.isEdit"
               v-model="row.valueName"
               ref="input"
-              @change="row.isEdit = false"
-              @blur="row.isEdit = false"
+              @change="editComplete(row)"
+              @blur="editComplete(row)"
             ></el-input>
             <p v-else @click="edit(row)" style="margin: 0">
               {{ row.valueName }}
@@ -98,7 +104,6 @@
 </template>
 
 <script>
-import { category } from "@/api";
 import Category from "./category";
 export default {
   name: "AttrList",
@@ -118,31 +123,33 @@ export default {
     };
   },
   methods: {
+    /* 获取属性值列表 */
     async getAttrInfoList(category) {
       this.category = category;
-      const result = await this.$API.attr.getAttrInfoList(category);
-      if (result.code === 200) {
-        this.attrInfoList = result.data;
-      } else {
-        this.$message.error(result.message);
+      if (category.category3Id) {
+        const result = await this.$API.attr.getAttrInfoList(category);
+        if (result.code === 200) {
+          this.attrInfoList = result.data;
+        } else {
+          this.$message.error(result.message);
+        }
       }
     },
+    /* 点击修改属性 */
     updateAttr(row) {
       this.isShow = false;
       /* 深度克隆 */
       this.attr = JSON.parse(JSON.stringify(row));
     },
+    /* 编辑属性值 */
     edit(row) {
-      // row.isEdit = false;
       this.$set(row, "isEdit", true);
       /* 让输入框聚焦 */
       this.$nextTick(() => {
         this.$refs.input.focus();
       });
     },
-    // editComplete(row) {
-    //   row.isEdit = false;
-    // },
+    /* 删除属性值 */
     delAttrValue(row) {
       /* 有一个id */
       this.attr.attrValueList = this.attr.attrValueList.filter(
@@ -151,14 +158,60 @@ export default {
     },
     /* 保存属性 */
     async saveAttrInfo() {
-      await this.$API.attr.saveAttrInfo(this.attr);
-      this.isShow = true;
-      this.getAttrInfoList(this.category);
+      const data = this.attr;
+      /* 如果attr中包含id属性则为修改操作，否则为增加操作 */
+      if (!this.attr.id) {
+        /* 如果是增加操作，则需要在data中添加属性 */
+        data.categoryId = this.category.category3Id;
+        data.categoryLevel = 3;
+      }
+
+      const result = await this.$API.attr.saveAttrInfo(data);
+      if (result.code === 200) {
+        this.$message.success("保存属性成功");
+        this.isShow = true;
+        this.getAttrInfoList(this.category);
+      } else {
+        this.$message.error(result.message);
+      }
+    },
+    /* 添加属性值 */
+    addAttrValue() {
+      /* 给attrValueList增加一条值 */
+      this.attr.attrValueList.push({ isEdit: true });
+      /* 聚焦 */
+      this.$nextTick(() => {
+        this.$refs.input.focus();
+      });
+    },
+    /* 编辑属性值完成 */
+    editComplete(row) {
+      row.isEdit = false;
+      /* 如果这个属性值为空，则删除这条属性 */
+      if (!row.valueName) {
+        this.attr.attrValueList = this.attr.attrValueList.filter(
+          (item) => item.id !== row.id
+        );
+      }
+    },
+    /* 添加属性 */
+    addAttr() {
+      /* 清空attr临时数据 */
+      this.attr = {
+        attrName: "",
+        attrValueList: [],
+      };
     },
   },
   mounted() {},
   components: {
     Category,
+  },
+  beforeUpdate() {
+    /* 在每次数据更新前，如果没有category3Id则清空属性列表 */
+    if (this.category.category3Id === "") {
+      this.attrInfoList = [];
+    }
   },
 };
 </script>

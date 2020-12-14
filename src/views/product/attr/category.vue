@@ -65,31 +65,42 @@ export default {
   methods: {
     /* 获取二级分类列表 */
     async seleteCategory1Id(category1Id) {
+      /* 清空二三级列表 */
+      this.category2List = [];
+      this.category3List = [];
+      this.category.category2Id = "";
+      this.category.category3Id = "";
+
       const result = await this.$API.attr.getCategory2(category1Id);
       if (result.code === 200) {
         this.category2List = result.data;
+        
+        this.$emit("change", this.category);
       } else {
         this.$message.error(result.message);
       }
     },
     /* 获取三级分类列表 */
     async seleteCategory2Id(category2Id) {
+      /* 清空三级列表 */
+      this.category3List = [];
+      this.category.category3Id = "";
+
       const result = await this.$API.attr.getCategory3(category2Id);
       if (result.code === 200) {
         this.category3List = result.data;
+
+        this.$emit("change", this.category);
       } else {
         this.$message.error(result.message);
       }
     },
     /* 三个id返回给父组件 */
     async seleteCategory3Id() {
-      const category = {
-        ...this.category,
-      };
-      // const result = await this.$API.attr.getAttrInfoList(category);
-      // if (result.code === 200) {
-      this.$emit("change", category);
-      // }
+      // const category = {
+      //   ...this.category,
+      // };
+      this.$emit("change", this.category);
     },
   },
   async mounted() {
