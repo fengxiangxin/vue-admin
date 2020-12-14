@@ -3,7 +3,7 @@ import request from "@/utils/request";
 const api_name = "/admin/product";
 
 export default {
-  /*  */
+  /* 获取属性值列表 */
   getAttrInfoList({ category1Id, category2Id, category3Id }) {
     return request({
       url: `${api_name}/attrInfoList/${category1Id}/${category2Id}/${category3Id}`,
@@ -29,6 +29,14 @@ export default {
     return request({
       url: `${api_name}/getCategory3/${category2Id}`,
       method: "GET"
+    });
+  },
+  /* 保存属性值 */
+  saveAttrInfo(data) {
+    return request({
+      url: `${api_name}/saveAttrInfo`,
+      method: "POST",
+      data
     });
   }
 };

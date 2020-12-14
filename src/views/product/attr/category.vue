@@ -81,16 +81,15 @@ export default {
         this.$message.error(result.message);
       }
     },
-    /* 根据三个id获取对应属性列表数据并返回给父组件 */
+    /* 三个id返回给父组件 */
     async seleteCategory3Id() {
       const category = {
         ...this.category,
       };
-      const result = await this.$API.attr.getAttrInfoList(category);
-      console.log(result);
-      if (result.code === 200) {
-        this.$emit("change", result.data);
-      }
+      // const result = await this.$API.attr.getAttrInfoList(category);
+      // if (result.code === 200) {
+      this.$emit("change", category);
+      // }
     },
   },
   async mounted() {
