@@ -79,7 +79,7 @@ export default {
       if (result.code === 200) {
         this.category2List = result.data;
 
-        this.$emit("change", this.category);
+        this.$bus.$emit("change", this.category);
       } else {
         this.$message.error(result.message);
       }
@@ -94,17 +94,14 @@ export default {
       if (result.code === 200) {
         this.category3List = result.data;
 
-        this.$emit("change", this.category);
+        this.$bus.$emit("change", this.category);
       } else {
         this.$message.error(result.message);
       }
     },
     /* 三个id返回给父组件 */
     async seleteCategory3Id() {
-      // const category = {
-      //   ...this.category,
-      // };
-      this.$emit("change", this.category);
+      this.$bus.$emit("change", this.category);
     },
   },
   async mounted() {
