@@ -45,7 +45,7 @@ export default {
       method: "GET"
     });
   },
-  /* 更新spu销 */
+  /* 更新spu */
   //    POST /admin/product/updateSpuInfo
   updateSpuInfo(data) {
     return request({
@@ -54,13 +54,21 @@ export default {
       data
     });
   },
-  /* 更新spu销 */
+  /* 添加spu */
   //    POST /admin/product/saveSpuInfo
   saveSpuInfo(data) {
     return request({
       url: `${api_name}/saveSpuInfo`,
       method: "POST",
       data
+    });
+  },
+  /* 删除spu */
+  //    DELETE /admin/product/deleteSpu/{spuId}
+  deleteSpu(spuId) {
+    return request({
+      url: `${api_name}/deleteSpu/${spuId}`,
+      method: "DELETE"
     });
   }
 };

@@ -28,11 +28,18 @@
               @click="$emit('updateSpu', row)"
             ></el-button>
             <el-button icon="el-icon-info" type="info" size="mini"></el-button>
-            <el-button
-              icon="el-icon-delete"
-              type="danger"
-              size="mini"
-            ></el-button>
+
+            <el-popconfirm
+              :title="`确定删除 ${row.spuName} 吗？`"
+              @onConfirm="deleteSpu(row)"
+            >
+              <el-button
+                slot="reference"
+                type="danger"
+                icon="el-icon-delete"
+                size="mini"
+              ></el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -111,6 +118,15 @@ export default {
       this.current = 1;
       /* 为什么会发出两次请求？可能是由于size改变时会导致current发生改变，current发生改变时就又会发送一次请求 */
       this.getSpuList(1, size);
+    },
+    /* 删除spu */
+    async deleteSpu(row) {
+      const result = await this.$API.spu.deleteSpu(row.id);
+      /* 重新加载数据 */
+      if (result.code === 200) {
+        this.$message.success("删除SPU成功");
+        this.getSpuList(this.current, this.size);
+      }
     },
   },
   mounted() {
