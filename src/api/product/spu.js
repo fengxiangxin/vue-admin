@@ -45,11 +45,20 @@ export default {
       method: "GET"
     });
   },
-  /* 获取spu销售属性列表数据 */
+  /* 更新spu销 */
   //    POST /admin/product/updateSpuInfo
   updateSpuInfo(data) {
     return request({
       url: `${api_name}/updateSpuInfo`,
+      method: "POST",
+      data
+    });
+  },
+  /* 更新spu销 */
+  //    POST /admin/product/saveSpuInfo
+  saveSpuInfo(data) {
+    return request({
+      url: `${api_name}/saveSpuInfo`,
       method: "POST",
       data
     });

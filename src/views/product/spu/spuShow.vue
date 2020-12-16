@@ -1,7 +1,14 @@
 <template>
   <div>
     <el-card class="box-card" v-loading="loading">
-      <el-button type="primary" icon="el-icon-plus" disabled>添加SPU</el-button>
+      <!-- 触发事件，传入category3Id -->
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        :disabled="!category.category3Id"
+        @click="$emit('updateSpu', { category3Id: category.category3Id })"
+        >添加SPU</el-button
+      >
       <el-table :data="spuList" border style="width: 100%">
         <el-table-column type="index" label="序号" width="80" align="center">
         </el-table-column>
@@ -30,7 +37,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
-        layout="prev, pager, next, jumper, sizes, total"
+        layout="prev, pager, next, jumper, ->, sizes, total"
         :total="0"
         :page-sizes="[5, 10, 15]"
         :page-size="5"
@@ -104,3 +111,7 @@ export default {
   },
 };
 </script>
+<style lang="sass">
+.el-pagination
+  text-align: center
+</style>

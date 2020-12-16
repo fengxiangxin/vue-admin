@@ -123,7 +123,7 @@
 
         <el-form-item>
           <el-button type="primary" @click="saveSpuUpdate">保存</el-button>
-          <el-button>取消</el-button>
+          <el-button @click="$emit('show', spu.category3Id)">取消</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -153,7 +153,7 @@ export default {
         ],
         tmId: [{ required: true, message: "请选择品牌", trigger: "change" }],
         spuImageList: [{ required: true, validator: this.imageValidator }],
-        spuSaleAttrList: [{ required: true, validator: this.saleValidator }],
+        spuSaleAttrList: [{ validator: this.saleValidator }],
       },
     };
   },
@@ -307,7 +307,14 @@ export default {
             spuSaleAttrList: this.spuSaleAttrList,
           };
           /* 发送请求 */
-          const result = await this.$API.spu.updateSpuInfo(data);
+          let result;
+          if (this.spu.id) {
+            /* 更新操作 */
+            result = await this.$API.spu.updateSpuInfo(data);
+          } else {
+            /* 添加操作 */
+            result = await this.$API.spu.saveSpuInfo(data);
+          }
           /* 跳转页面 */
           if (result.code === 200) {
             this.$message.success("保存 SPU 成功");
@@ -321,9 +328,12 @@ export default {
   },
   mounted() {
     this.getTrademarkList();
-    this.getSpuImageList();
-    this.getSpuSaleAttrList();
     this.getBaseSaleAttrList();
+    /* 根据id判断是修改操作还是添加操作 */
+    if (this.spu.id) {
+      this.getSpuImageList();
+      this.getSpuSaleAttrList();
+    }
   },
 };
 </script>

@@ -49,7 +49,7 @@
     </el-table>
     <!-- 绑定自定义事件时$event是指子组件中触发事件时传入的第一个参数 -->
     <el-pagination
-      layout="prev, pager, next, jumper, sizes, total"
+      layout="prev, pager, next, jumper, ->, sizes, total"
       :total="total"
       :page-sizes="[3, 6, 9]"
       :page-size="size"
@@ -282,11 +282,8 @@ export default {
   width: 100px
   height: 60px
 
-.el-pagination
-  text-align: right
-
->>>.el-pagination__sizes
-  margin-left: 240px
+>>>.el-pagination
+  text-align: center
 
 >>>.avatar-uploader .el-upload
   border: 1px dashed #d9d9d9
