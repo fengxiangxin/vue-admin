@@ -38,9 +38,12 @@
       </el-table>
       <el-pagination
         layout="prev, pager, next, jumper, ->, sizes, total"
-        :total="0"
+        :total="total"
         :page-sizes="[5, 10, 15]"
-        :page-size="5"
+        :page-size.sync="size"
+        :current-pagecurrent.sync="current"
+        @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
       >
       </el-pagination>
     </el-card>
@@ -62,11 +65,12 @@ export default {
       spuList: [],
       current: 1,
       pages: 0,
-      size: 2,
+      size: 5,
       total: 0,
     };
   },
   methods: {
+    /* 请求spu列表数据 */
     async getSpuList(page, limit) {
       this.loading = true;
       /* 发送请求获取分页列表 */
@@ -88,12 +92,25 @@ export default {
       }
       this.loading = false;
     },
+    /* 当更新category3Id时重新请求数据 */
     changeCategory3Id(category) {
       this.category = category;
       /* 加载spu列表 */
       if (category.category3Id) {
         this.getSpuList(this.current, this.size);
       }
+    },
+    /* 页码改变时 */
+    handleCurrentChange(current) {
+      this.getSpuList(current, this.size);
+    },
+    /* 改变每页条数时 */
+    handleSizeChange(size) {
+      // this.size = size;
+      /* 提前将current传入子组件，防止current变化，减少了发送一次请求 */
+      this.current = 1;
+      /* 为什么会发出两次请求？可能是由于size改变时会导致current发生改变，current发生改变时就又会发送一次请求 */
+      this.getSpuList(1, size);
     },
   },
   mounted() {
