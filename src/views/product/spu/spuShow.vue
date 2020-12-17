@@ -20,6 +20,7 @@
               icon="el-icon-plus"
               type="primary"
               size="mini"
+              @click="$emit('addSku', row)"
             ></el-button>
             <el-button
               icon="el-icon-edit"

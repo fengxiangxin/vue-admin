@@ -1,8 +1,11 @@
 <template>
   <div>
-    <Category />
-    <SpuShow v-if="isShow" @updateSpu="updateSpu" />
-    <SpuUpdate v-else :spuRow="spuRow" @show="show" />
+    <SkuAdd v-if="isShowSku" :spuRow="spuRow" />
+    <div v-else>
+      <Category />
+      <SpuShow v-if="isShow" @updateSpu="updateSpu" @addSku="addSku" />
+      <SpuUpdate v-else :spuRow="spuRow" @show="show" />
+    </div>
   </div>
 </template>
 
@@ -10,12 +13,14 @@
 import Category from "@/components/Category";
 import SpuShow from "./spuShow";
 import SpuUpdate from "./spuUpdate";
+import SkuAdd from "./skuAdd";
 export default {
   name: "SpuList",
   data() {
     return {
       isShow: true,
       spuRow: {},
+      isShowSku: true,
     };
   },
   methods: {
@@ -33,11 +38,17 @@ export default {
       this.isShow = false;
       this.spuRow = row;
     },
+    /* 进入添加sku页面 */
+    addSku(row) {
+      this.isShowSku = true;
+      this.spuRow = row;
+    },
   },
   components: {
     Category,
     SpuShow,
     SpuUpdate,
+    SkuAdd,
   },
 };
 </script>
