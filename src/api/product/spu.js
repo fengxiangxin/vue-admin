@@ -29,7 +29,7 @@ export default {
       method: "GET"
     });
   },
-  /* 获取所有销售属性列表数据 */
+  /* 获取spu销售属性列表数据 */
   //    /admin/product/spuSaleAttrList/{spuId}
   getSpuSaleAttrList(spuId) {
     return request({
@@ -37,7 +37,7 @@ export default {
       method: "GET"
     });
   },
-  /* 获取spu销售属性列表数据 */
+  /* 获取所有销售属性列表数据 */
   //    /admin/product/baseSaleAttrList
   getBaseSaleAttrList() {
     return request({

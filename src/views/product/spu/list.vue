@@ -20,7 +20,7 @@ export default {
     return {
       isShow: true,
       spuRow: {},
-      isShowSku: true,
+      isShowSku: false,
     };
   },
   methods: {
