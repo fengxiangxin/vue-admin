@@ -111,6 +111,7 @@
 
 <script>
 import Category from "@/components/Category";
+import { mapState } from "vuex";
 export default {
   name: "AttrList",
   data() {
@@ -121,20 +122,27 @@ export default {
         attrValueList: [],
       },
       isShow: true,
-      category: {
-        category1Id: "",
-        category2Id: "",
-        category3Id: "",
-      },
+      // category: {
+      //   category1Id: "",
+      //   category2Id: "",
+      //   category3Id: "",
+      // },
     };
+  },
+  computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
   },
   methods: {
     /* 获取属性值列表 */
-    async getAttrInfoList(category) {
-      this.category = category;
-      if (category.category3Id) {
-        const result = await this.$API.attr.getAttrInfoList(category);
+    async getAttrInfoList() {
+      // this.category = category;
+      /* 只有当category3Id不为空才会发送请求 */
+      if (this.category.category3Id) {
+        const result = await this.$API.attr.getAttrInfoList(this.category);
         if (result.code === 200) {
+          this.$message.success("获取平台属性列表成功");
           this.attrInfoList = result.data;
         } else {
           this.$message.error(result.message);
@@ -176,7 +184,7 @@ export default {
       if (result.code === 200) {
         this.$message.success("保存属性成功");
         this.isShow = true;
-        this.getAttrInfoList(this.category);
+        this.getAttrInfoList();
       } else {
         this.$message.error(result.message);
       }
@@ -214,23 +222,20 @@ export default {
       if (result.code === 200) {
         this.$message.success("删除属性成功");
         /* 重新加载 */
-        this.getAttrInfoList(this.category);
+        this.getAttrInfoList();
       } else {
         this.$message.error(result.message);
       }
     },
   },
-  mounted() {
-    this.$bus.$on("change", this.getAttrInfoList);
+  watch: {
+    "category.category3Id"() {
+      this.getAttrInfoList();
+    },
   },
+
   components: {
     Category,
-  },
-  beforeUpdate() {
-    /* 在每次数据更新前，如果没有category3Id则清空属性列表 */
-    if (this.category.category3Id === "") {
-      this.attrInfoList = [];
-    }
   },
 };
 </script>

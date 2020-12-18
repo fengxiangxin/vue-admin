@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SkuAdd v-if="isShowSku" :spuRow="spuRow" />
+    <SkuAdd v-if="isShowSku" :spuRow="spuRow" @show="show" />
     <div v-else>
       <Category />
       <SpuShow v-if="isShow" @updateSpu="updateSpu" @addSku="addSku" />
@@ -25,12 +25,13 @@ export default {
   },
   methods: {
     /* 重新回到这个页面 */
-    show(category3Id) {
+    show() {
       /* 修改显示 */
       this.isShow = true;
+      this.isShowSku = false;
       /* 重新加载数据 */
       this.$nextTick(() => {
-        this.$bus.$emit("change", { category3Id });
+        this.$bus.$emit("change", this.$store.state.category.category);
       });
     },
     updateSpu(row) {

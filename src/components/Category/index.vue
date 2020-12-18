@@ -56,9 +56,6 @@ export default {
   name: "Category",
   data() {
     return {
-      // category1List: [], //一级列表
-      // category2List: [], //二级列表
-      // category3List: [], //三级列表
       category: {
         category1Id: "",
         category2Id: "",
@@ -80,36 +77,13 @@ export default {
     /* 获取二级分类列表 */
     seleteCategory1Id(category1Id) {
       this.getCategory2(this.category.category1Id);
-      // /* 清空二三级列表 */
-      // this.category2List = [];
-      // this.category3List = [];
-      // this.category.category2Id = "";
-      // this.category.category3Id = "";
-
-      // const result = await this.$API.attr.getCategory2(category1Id);
-      // if (result.code === 200) {
-      //   this.category2List = result.data;
-
-      //   this.$bus.$emit("change", this.category);
-      // } else {
-      //   this.$message.error(result.message);
-      // }
+      this.category.category2Id = "";
+      this.category.category3Id = "";
     },
     /* 获取三级分类列表 */
     seleteCategory2Id(category2Id) {
       this.getCategory3(this.category.category2Id);
-      // /* 清空三级列表 */
-      // this.category3List = [];
-      // this.category.category3Id = "";
-
-      // const result = await this.$API.attr.getCategory3(category2Id);
-      // if (result.code === 200) {
-      //   this.category3List = result.data;
-
-      //   this.$bus.$emit("change", this.category);
-      // } else {
-      //   this.$message.error(result.message);
-      // }
+      this.category.category3Id = "";
     },
     /* 三个id返回给父组件 */
     seleteCategory3Id() {
@@ -119,12 +93,6 @@ export default {
   },
   mounted() {
     this.getCategory1();
-    // const result = await this.$API.attr.getCategory1();
-    // if (result.code === 200) {
-    //   this.category1List = result.data;
-    // } else {
-    //   this.$message.error(result.message);
-    // }
   },
 };
 </script>
